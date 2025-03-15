@@ -80,7 +80,7 @@ namespace WhiteLagoon.Web.Controllers
         [HttpPost]
         public IActionResult Update(AmenityVM amenityVM)
         {
-            bool roomNumberExists = _unitOfWork.amenity.Any(u => u.Id == amenityVM.Amenity.Id);
+            //bool roomNumberExists = _unitOfWork.amenity.Any(u => u.Id == amenityVM.Amenity.Id);
             if (ModelState.IsValid)
             {
                 _unitOfWork.amenity.Update(amenityVM.Amenity);
