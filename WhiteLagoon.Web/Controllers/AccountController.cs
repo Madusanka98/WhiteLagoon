@@ -31,11 +31,11 @@ namespace WhiteLagoon.Web.Controllers
         {
             returnUrl??=Url.Content("~/");
 
-            LoginVM loginVM = new()
+            LoginVM LoginVM = new()
             {
                 RedirectUrl = returnUrl,
             };
-            return View(loginVM);
+            return View(LoginVM);
         }
 
         public async Task<IActionResult> LogOut()
@@ -52,11 +52,7 @@ namespace WhiteLagoon.Web.Controllers
         public IActionResult Register(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
-            {
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).Wait();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).Wait();
-            }
+            
 
             RegisterVM registerVM = new()
             {
@@ -125,15 +121,15 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginVM loginVM)
+        public async Task<IActionResult> Login(LoginVM LoginVM)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe,lockoutOnFailure:false);
+                var result = await _signInManager.PasswordSignInAsync(LoginVM.Email, LoginVM.Password, LoginVM.RememberMe,lockoutOnFailure:false);
 
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByEmailAsync(loginVM.Email);
+                    var user = await _userManager.FindByEmailAsync(LoginVM.Email);
                     if (await _userManager.IsInRoleAsync(user, SD.Role_Admin))
                     {
                         return RedirectToAction("Index", "Dashboard");
@@ -141,13 +137,13 @@ namespace WhiteLagoon.Web.Controllers
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(loginVM.RedirectUrl))
+                        if (string.IsNullOrEmpty(LoginVM.RedirectUrl))
                         {
                             return RedirectToAction("Index", "Home");
                         }
                         else
                         {
-                            return LocalRedirect(loginVM.RedirectUrl);
+                            return LocalRedirect(LoginVM.RedirectUrl);
                         }
                     }
                 }
@@ -157,7 +153,7 @@ namespace WhiteLagoon.Web.Controllers
                 }
             }
 
-            return View(loginVM);
+            return View(LoginVM);
         }
 
     }
